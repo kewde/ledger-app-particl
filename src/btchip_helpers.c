@@ -150,6 +150,23 @@ unsigned char btchip_output_script_is_coldstake(unsigned char *buffer) {
 
     return 0;
 }
+
+unsigned char btchip_output_script_is_regular_256_bit(unsigned char *buffer) {
+    static const unsigned char OP_DUP = 0x76;
+    static const unsigned char OP_SHA256 = 0xa8;
+    static const unsigned char ADDR_LENGTH = 0x20;
+    static const unsigned char OP_EQUALVERIFY = 0x88;
+    static const unsigned char OP_CHECKSIG = 0xAC; 
+
+    if (buffer[1] == OP_DUP
+        && buffer[2] == OP_SHA256
+        && buffer[3] == ADDR_LENGTH
+        && buffer[36] == OP_EQUALVERIFY
+        && buffer[37] == OP_CHECKSIG)
+        return 1;
+
+    return 0;
+}
 #endif
 
 unsigned char btchip_rng_u8_modulo(unsigned char modulo) {

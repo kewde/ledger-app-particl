@@ -45,8 +45,8 @@ static void btchip_apdu_hash_input_finalize_full_reset(void) {
 static bool check_output_displayable() {
     bool displayable = true;
     unsigned char amount[8], isOpReturn, isP2sh, isNativeSegwit, j,
-        nullAmount, isColdStake = 1;
-    unsigned char isOpCreate, isOpCall;
+        nullAmount = 1;
+    unsigned char isOpCreate, isOpCall, isColdStake, isRegular256Bit;
 
     for (j = 0; j < 8; j++) {
         if (btchip_context_D.currentOutput[j] != 0) {
@@ -70,9 +70,11 @@ static bool check_output_displayable() {
         btchip_output_script_is_op_call(btchip_context_D.currentOutput + 8);
     isColdStake =
         btchip_output_script_is_coldstake(btchip_context_D.currentOutput + 8);
+    isRegular256Bit =
+        btchip_output_script_is_regular_256_bit(btchip_context_D.currentOutput + 8);
 
     if (!btchip_output_script_is_regular(btchip_context_D.currentOutput + 8) &&
-         !isP2sh && !(nullAmount && isOpReturn) && !isColdStake) {
+         !isP2sh && !(nullAmount && isOpReturn) && !isColdStake && !isRegular256Bit) {
         PRINTF("Error : Unrecognized input script");
         THROW(EXCEPTION);
     }
